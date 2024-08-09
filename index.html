@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Cooking Machine</title>
+    <style> 
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .machine {    
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            font-size: 1rem;
+        }
+        .line {
+            display: flex;
+            align-items: center; 
+        }
+        .vertical-bar {
+            width: 10px;
+            height: 100px;
+            background-color: black;
+        }
+        .horizontal-bar {
+            width: 50px;
+            height: 5px;
+            background-color: black;
+        }
+        .chicken {
+            padding: 0 10px;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .chicken.glow {
+            animation: fireGlow 1s infinite alternate;
+        }
+        @keyframes fireGlow {  
+            0% {
+                text-shadow: 0 0 10px rgba(255, 69, 0, 0.5), 0 0 20px rgba(255, 140, 0, 0.7);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(255, 69, 0, 0.7), 0 0 30px rgba(255, 140, 0, 1);
+            }
+        }
+        .timer {
+            font-size: 1.5em;
+            margin-left: 10px;
+        } 
+        .notification {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 10px;
+            display: none;
+        } 
+        .reset-button {
+            margin-right: 10px;
+            padding: 5px 10px;
+            background-color: lightgray;
+            border: none;
+            cursor: pointer;
+        }
+        .base {
+            display: flex; 
+            width: 100%;
+        }
+        .base-horizontal {
+            width: 100%;
+            height: 5px;
+            background-color: black;
+            margin-left: 0; /* Remove margin to connect with the left side */
+        }
+        .input-container {
+            display: flex;
+            align-items: center;
+            margin-left: 10px;
+        }
+        .input-minutes {
+            width: 50px;
+            margin-right: 5px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+  
+    <div class="machine">
+        <h1 id="grill-title">Grill Machine</h1>
+        <!-- Create six lines for the chickens -->
+        <div class="line">
+            <button class="reset-button" id="reset-button-0">⟳</button>
+            <div class="vertical-bar"></div>
+            <div class="horizontal-bar"></div>
+            <div class="chicken" data-index="0">🍗</div>
+            <div class="timer" id="timer-0">00:00</div>
+            <div class="notification" id="notification-0"></div>
+            <div class="input-container">
+                <input type="number" class="input-minutes" id="input-minutes-0" placeholder="Minutes" min="1" />
+            </div>
+        </div>
+        <div class="line">
+            <button class="reset-button" id="reset-button-1">⟳</button>
+            <div class="vertical-bar"></div>
+            <div class="horizontal-bar"></div>
+            <div class="chicken" data-index="1">🍗</div>
+            <div class="timer" id="timer-1">00:00</div>
+            <div class="notification" id="notification-1"></div>
+            <div class="input-container">
+                <input type="number" class="input-minutes" id="input-minutes-1" placeholder="Minutes" min="1" />
+            </div>
+        </div>
+        <div class="line">
+            <button class="reset-button" id="reset-button-2">⟳</button>
+            <div class="vertical-bar"></div>
+            <div class="horizontal-bar"></div>
+            <div class="chicken" data-index="2">🍗</div>
+            <div class="timer" id="timer-2">00:00</div>
+            <div class="notification" id="notification-2"></div>
+            <div class="input-container">
+                <input type="number" class="input-minutes" id="input-minutes-2" placeholder="Minutes" min="1" />
+            </div>
+        </div>
+        <div class="line">
+            <button class="reset-button" id="reset-button-3">⟳</button>
+            <div class="vertical-bar"></div>
+            <div class="horizontal-bar"></div>
+            <div class="chicken" data-index="3">🍗</div>
+            <div class="timer" id="timer-3">00:00</div>
+            <div class="notification" id="notification-3"></div>
+            <div class="input-container">
+                <input type="number" class="input-minutes" id="input-minutes-3" placeholder="Minutes" min="1" />
+            </div>
+        </div>
+        <div class="line">
+            <button class="reset-button" id="reset-button-4">⟳</button>
+            <div class="vertical-bar"></div>
+            <div class="horizontal-bar"></div>
+            <div class="chicken" data-index="4">🍗</div>
+            <div class="timer" id="timer-4">00:00</div>
+            <div class="notification" id="notification-4"></div>
+            <div class="input-container">
+                <input type="number" class="input-minutes" id="input-minutes-4" placeholder="Minutes" min="1" />
+            </div>
+        </div>
+        <div class="line">
+            <button class="reset-button" id="reset-button-5">⟳</button>
+            <div class="vertical-bar"></div>
+            <div class="horizontal-bar"></div>
+            <div class="chicken" data-index="5">🍗</div>
+            <div class="timer" id="timer-5">00:00</div>
+            <div class="notification" id="notification-5"></div>
+            <div class="input-container">
+                <input type="number" class="input-minutes" id="input-minutes-5" placeholder="Minutes" min="1" />
+            </div>
+        </div>
+        <div class="base">
+            <div class="base-horizontal"></div>
+        </div>
+    </div>
+<br/>
+    <script>
+        const timers = [0, 0, 0, 0, 0, 0];
+        const intervals = [];
+        const durations = [0, 0, 0, 0, 0, 0]; // Store the duration for each timer
+
+        // Load timers from localStorage and continue if already started
+        window.onload = function() {
+            for (let i = 0; i < timers.length; i++) {
+                const startTime = localStorage.getItem('startTime-' + i);
+                const duration = localStorage.getItem('duration-' + i);
+                const inputValue = localStorage.getItem('inputMinutes-' + i);
+                if (startTime && duration) {
+                    const elapsedTime = Math.floor((Date.now() - parseInt(startTime)) / 1000);
+                    timers[i] = elapsedTime;
+
+                    // Continue timer if less than the duration
+                    if (timers[i] < duration) {
+                        durations[i] = duration; // Store the duration
+                        startTimer(i, durations[i]); // Continue timer
+                        document.querySelector(`.chicken[data-index="${i}"]`).classList.add('glow');
+                    } else {
+                        showNotification(i, 'green'); // Show green circle if ready
+                    }
+                } else {
+                    updateNotification(i, 'red'); // Show red circle if timer is 0
+                }
+
+                // Restore input value
+                if (inputValue) {
+                    document.getElementById(`input-minutes-${i}`).value = inputValue;
+                }
+            }
+            updateGrillTitle(); // Update grill title on load
+        };
+
+        // Update timer display
+        function updateTimerDisplay(index) {
+            const minutes = Math.floor(timers[index] / 60).toString().padStart(2, '0');
+            const seconds = (timers[index] % 60).toString().padStart(2, '0');
+            document.getElementById('timer-' + index).textContent = `${minutes}:${seconds}`;
+            updateGrillTitle(); // Update grill title whenever timer is updated
+        }
+
+        // Update grill title based on timer status
+        function updateGrillTitle() {
+            const titleElement = document.getElementById('grill-title');
+            const isAnyTimerRunning = timers.some(timer => timer > 0);
+            titleElement.textContent = isAnyTimerRunning ? 'Grill Machine 🔥' : 'Grill Machine';
+        }
+
+        // Show notification and reset button
+        function showNotification(index, color) {
+            updateNotification(index, color);
+            const resetButton = document.getElementById('reset-button-' + index);
+            resetButton.style.display = 'inline'; // Show the reset button
+            updateGrillTitle(); // Update grill title whenever notification is shown
+        }
+
+        // Update notification color
+        function updateNotification(index, color) {
+            const notification = document.getElementById('notification-' + index);
+            notification.style.backgroundColor = color;
+            notification.style.display = 'inline'; // Show the circle
+        }
+
+        // Start the timer
+        function startTimer(index, duration) {
+            intervals[index] = setInterval(() => {
+                timers[index]++;
+                updateTimerDisplay(index);
+                updateNotification(index, 'orange'); // Show orange circle while counting
+
+                if (timers[index] >= duration) {
+                    clearInterval(intervals[index]);
+                    intervals[index] = null;
+                    localStorage.removeItem('startTime-' + index);
+                    localStorage.removeItem('duration-' + index);
+                    document.querySelector(`.chicken[data-index="${index}"]`).classList.remove('glow');
+                    showNotification(index, 'green'); // Show green circle if ready
+                }
+            }, 1000);
+        }
+
+        // Toggle the timer
+        function toggleTimer(index) {
+            const chicken = document.querySelector(`.chicken[data-index="${index}"]`);
+
+            if (intervals[index]) {
+                clearInterval(intervals[index]);
+                intervals[index] = null;
+                localStorage.removeItem('startTime-' + index);
+                localStorage.removeItem('duration-' + index);
+                chicken.classList.remove('glow');
+                updateNotification(index, 'red'); // Show red circle if timer is stopped
+            } else {
+                const durationInMinutes = parseInt(document.getElementById(`input-minutes-${index}`).value);
+                const durationInSeconds = durationInMinutes * 60; // Convert to seconds
+                if (durationInSeconds > 0) {
+                    localStorage.setItem('startTime-' + index, Date.now());
+                    localStorage.setItem('duration-' + index, durationInSeconds); // Store the duration
+                    localStorage.setItem('inputMinutes-' + index, durationInMinutes); // Store input value
+                    timers[index] = 0; // Reset the timer
+                    startTimer(index, durationInSeconds);
+                    chicken.classList.add('glow');
+                    document.getElementById('notification-' + index).style.display = 'none';
+                } else {
+                    alert("Please enter a valid number of minutes.");
+                }
+            }
+        }
+
+        // Reset the timer and notification
+        function resetTimer(index) {
+            clearInterval(intervals[index]);
+            intervals[index] = null;
+            timers[index] = 0;
+            updateTimerDisplay(index);
+            localStorage.removeItem('startTime-' + index);
+            localStorage.removeItem('duration-' + index);
+           // localStorage.removeItem('inputMinutes-' + index); // Remove input value
+            document.querySelector(`.chicken[data-index="${index}"]`).classList.remove('glow');
+            updateNotification(index, 'red'); // Show red circle
+            updateGrillTitle(); // Update grill title when timer is reset
+        }
+
+        // Add event listeners to the chicken elements
+        document.querySelectorAll('.chicken').forEach((chicken, index) => {
+            chicken.addEventListener('click', () => toggleTimer(index));
+        });
+
+        // Add event listeners to the reset buttons
+        document.querySelectorAll('.reset-button').forEach((button, index) => {
+            button.addEventListener('click', () => resetTimer(index));
+        });
+
+        // Add event listeners to the input fields
+        document.querySelectorAll('.input-minutes').forEach((input, index) => {
+            input.addEventListener('input', () => {
+                const value = input.value;
+                localStorage.setItem(`inputMinutes-${index}`, value); // Save input value
+            });
+        });
+    </script>
+</body>
+</html>
